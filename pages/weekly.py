@@ -12,7 +12,7 @@ st.sidebar.title("Navigation")
 st.sidebar.header("Header")
 st.sidebar.success("Success message!")
 
-dt_week= pd.read_excel("Export.xls")
+dt_week= pd.read_excel("./Export.xls")
 dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes Total':'Pertes','Période au':'Semaine','Produit':'Produit'})
 
 def top_pertes(dt):
