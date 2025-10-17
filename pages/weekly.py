@@ -3,6 +3,7 @@ import pandas as pd # pyright: ignore[reportMissingModuleSource]
 import plotly.express as px # pyright: ignore[reportMissingImports]
 import plotly.graph_objects as go # type: ignore
 
+
 st.set_page_config(page_title="Weekly Report", 
                    page_icon=":calendar:",
                    layout="wide"
@@ -11,6 +12,7 @@ st.set_page_config(page_title="Weekly Report",
 st.sidebar.title("Navigation")
 st.sidebar.header("Header")
 st.sidebar.success("Success message!")
+st.set_option("client.showErrorDetails", True)
 
 dt_week= pd.read_excel("./Export.xls")
 dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes Total':'Pertes','Période au':'Semaine','Produit':'Produit'})
@@ -21,7 +23,6 @@ def top_pertes(dt):
         dt,
         x="Produit",
         y="Pertes",
-        # text="Produit",
         hover_name="Produit",
         color="Produit",
         height=600
@@ -34,7 +35,6 @@ def top_ecart(dt):
         dt,
         x="Produit",
         y="ecart",
-        # text="Produit",
         hover_name="Produit",
         color="Produit",
         height=600
@@ -44,6 +44,7 @@ def top_ecart(dt):
     fig_.update_traces(marker_line_width=0.5, marker_line_color="white")
     return st.plotly_chart(fig_)
 dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True).dt.strftime('%U')
+
 
 # TOP PERTES
 dt_pertes = dt_week.sort_values(by='Pertes', ascending=False, inplace=True)
@@ -63,23 +64,6 @@ top_ecart(dt_week[["Produit","Pertes","ecart","Semaine"]].where(dt_week["Semaine
 st.text_area("Commentaire écarts", height=400)
 
 
-# # dt_week.columns
-# dt_week.columns
-# dt_week = dt_week.sort_values(by='Pertes', ascending=False).head(10)
-
-# st.text("Données de la semaine du ")    
-# dt_week.reset_index(drop=True, inplace=True)
-
-
-
-# dt_week[['Pertes','ecart']] = dt_week[['Pertes','ecart']].astype(int)
-# # dt_week[['Produit','Pertes','ecart']]
-
-# Renommer la colonne 'Période du' en 'Semaine' et formater les dates en semaines
-
-# st.text("Données de la semaine " + str(pd.to_datetime(dt_week["Semaine"]).dt.strftime('%U').head(1).values[0]))
-# dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True).dt.strftime('%U')
-
 
 
 st.subheader("Analyse des Pertes et écarts par semaine et par produit")
@@ -96,7 +80,6 @@ selected = st.multiselect(
 selected2 = st.multiselect(
     "Selection de prodtuit",
     options=dt_week["Produit"].unique(),
-    # default=dt_week["Produit"].head(1).values,
     key="product_selection2"
 )
 st.dataframe(dt_week[["Semaine","Produit","ecart","Pertes"]].query("Produit == @selected2" " & Semaine == @selected"), use_container_width=True)
@@ -110,9 +93,7 @@ fig_pertes = px.histogram(
     labels={"Pertes":"Pertes en €"},
     template="plotly_white",
     text_auto=True,
-    # pattern_shape="Produit",
     facet_col_wrap=2,    
-
     facet_col="Produit",
     color="Produit",
     height=800
@@ -132,20 +113,18 @@ fig_ecart = px.histogram(
     labels={"Pertes":"Pertes en €"},
     template="plotly_white",
     text_auto=True,
-    # pattern_shape="Produit",
     facet_col="Produit",
     facet_col_wrap=2,    
     color="Produit",
     height=800
 )
-# st.plotly_chart(fig_ecart)
 
 
 left_column, right_column = st.columns(2)
 left_column.metric(label="Total des pertes", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['Pertes'].sum())+" €")
 right_column.metric(label="Total des écarts", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['ecart'].sum())+" €")
 
-if len(selected2) > 5 :
+if len(selected2) < 5 :
     left_column.plotly_chart(fig_pertes, use_container_width=True)
     right_column.plotly_chart(fig_ecart, use_container_width=True)
 else:
