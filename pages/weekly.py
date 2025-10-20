@@ -43,6 +43,9 @@ def top_ecart(dt):
     fig_.update_yaxes(title_text="")
     fig_.update_traces(marker_line_width=0.5, marker_line_color="white")
     return st.plotly_chart(fig_)
+
+
+
 dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True).dt.strftime('%U')
 
 
@@ -59,7 +62,9 @@ dt_pertes = dt_week.sort_values(by='ecart', ascending=False, inplace=True)
 st.subheader("Top 10 des écarts de la semaine " + str(dt_week["Semaine"].max()))
 dt_week = dt_week.where(dt_week["Marché"] == 'FOOD').dropna(subset=['Marché'])
 
-st.dataframe(dt_week[["Produit","Pertes","ecart"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10), use_container_width=True)
+st.dataframe(dt_week[["Produit","Pertes","ecart"]].
+             where(dt_week["Semaine"] == dt_week["Semaine"].
+                   max()).dropna().head(10), use_container_width=True)
 top_ecart(dt_week[["Produit","Pertes","ecart","Semaine"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10))
 st.text_area("Commentaire écarts", height=400)
 
