@@ -34,7 +34,7 @@ dt_ca["Day"] = pd.to_datetime(dt_ca["Day"],dayfirst=True).dt.strftime('%U')
 dt_ca.rename(columns={'Day':'Semaine'}, inplace=True)
 select_week = st.selectbox("Select Week", options=dt_ca["Semaine"].unique())
 st.subheader("CA de la semaine " + str(select_week))
-st.dataframe(dt_ca[['CA_HT']].groupby(dt_ca['Semaine']).agg('sum').query("Semaine == @dt_ca['Semaine'].max()"  ), use_container_width=True)
+st.dataframe(dt_ca[['CA_HT']].groupby(dt_ca['Semaine']).agg('sum').query("Semaine == @dt_ca['Semaine']"  ), use_container_width=True)
 fig_ca = px.bar(
         dt_ca,
         x="Semaine",
