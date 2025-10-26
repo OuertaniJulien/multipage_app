@@ -1,0 +1,17 @@
+dt_ca[['wd','Day']]
+
+
+# dt_ca[['Day','wd','CA_HT']]
+
+
+# dt_ca["Day"] = pd.to_datetime(dt_ca["CA_HT"].astype(str).str.split('').reset_index(),dayfirst=True).dt.strftime('%d/%m/%Y')
+# test = dt_ca["CA_HT"].astype(str).str.split('').reset_index(True)
+# st.text(test.columns)
+# dt_ca[['CA_HT','Day']] = dt_ca['CA_HT'].astype(str).str.split('').reset_index()
+
+# dt_ca['Day'] = pd.to_datetime(dt_ca['Day'],dayfirst=True).dt.strftime('%A')
+
+dt_ca[['CA_HT']] = dt_ca[['CA_HT']].groupby(dt_ca['Day']).agg('sum').query("Day >= @date_start & Day <= @date_end")
+
+dt_ca.columns
+dt_ca['CA_HT']
