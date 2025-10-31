@@ -25,7 +25,7 @@ st.sidebar.header("Selection de produit")
 
 dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True)
 
-dt_week.columns
+
 
 #Par produit
 st.subheader("Analyse des Pertes et écarts par semaine et par produit")
