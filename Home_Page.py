@@ -19,14 +19,14 @@ def load_css(file_path):
 css_path = pathlib.Path("styles.css")
 load_css(css_path)
 
-if not st.user:
-    if st.button("Log in with Google"):
-        st.login()
-    st.stop()
+# if not st.user:
+#     if st.button("Log in with Google"):
+#         st.login()
+#     st.stop()
 
-if st.button("Log out"):
-    st.logout()
-st.markdown(f"Welcome! {st.user.name}")
+# if st.button("Log out"):
+#     st.logout()
+# st.markdown(f"Welcome! {st.user.name}")
 # st.header("Home")
 
 
