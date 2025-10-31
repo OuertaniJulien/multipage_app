@@ -7,9 +7,9 @@ import locale
 locale.getlocale()
 
 
-locale.setlocale(locale.LC_TIME, 'fr_FR') # this sets the date time formats to es_ES, there are many other options for currency, numbers etc. 
+# locale.setlocale(locale.LC_TIME, 'fr_FR') # this sets the date time formats to es_ES, there are many other options for currency, numbers etc. 
 
-
+ 
 st.set_page_config(
     page_title="CA", 
                    page_icon=":calendar:",
