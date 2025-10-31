@@ -3,7 +3,10 @@ import pandas as pd # pyright: ignore[reportMissingModuleSource]
 import plotly.express as px # pyright: ignore[reportMissingImports]
 import plotly.graph_objects as go # type: ignore
 import pathlib
+import sqlite3
+# from sqlalchemy import create_engine
 
+con = sqlite3.connect('tutorial.db')
 
 # Function to load CSS from the 'assets' folder
 def load_css(file_path):
@@ -22,12 +25,13 @@ st.sidebar.header("Selection de produit")
 
 dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True)
 
-
+dt_week.columns
 
 #Par produit
 st.subheader("Analyse des Pertes et écarts par semaine et par produit")
 dt_week["Semaine"] = dt_week["Semaine"].dt.strftime('S%U')
-dt_week[['Pertes','ecart']] = dt_week[['Pertes','ecart']].fillna(0).astype(int)
+
+dt_week[['Pertes','ecart']] = dt_week[['Pertes','ecart']].fillna(0).astype(float).round(2)
 dt_week.sort_values(by='Pertes', ascending=False, inplace=True)
 
 selected = st.sidebar.multiselect(
@@ -39,12 +43,20 @@ selected = st.sidebar.multiselect(
 
 selected2 = st.sidebar.multiselect(
     "Selection de produits",
-    options=dt_week["Produit"].unique(),
-    # default=dt_week["Semaine"].tail(1).values,
-    # key="product_selection"
-    
+    options=dt_week["Produit"].unique()
 )
-dt_week = dt_week[['Semaine','Produit','Pertes','ecart']].query("Produit == @selected2 & Semaine == @selected")
+cur = con.cursor()
+# cur.execute("CREATE TABLE Produit(Semaine,Produit,Pertes,ecart)")
+
+dt_week[['Semaine','Produit','Pertes','ecart']]
+dt_week[['Semaine','Produit','Pertes','ecart']].to_sql('Produit',con,if_exists="append",index=False)
+con.execute("DROP TABLE Produit")
+
+dt_week['Prix_Unitaire'] = dt_week['Pertes']/dt_week['Pertes Qté']
+
+dt_week[["ecart","Pertes","Prix_Unitaire"]] = dt_week[["ecart","Pertes","Prix_Unitaire"]].round(2)
+dt_week[["ecart","Pertes","Prix_Unitaire"]] = dt_week[["ecart","Pertes","Prix_Unitaire"]]
+dt_week = dt_week[['Semaine','Produit','Pertes','ecart','Prix_Unitaire']].query("Produit == @selected2 & Semaine == @selected")
 st.dataframe(dt_week, hide_index=True)
 
 dt_week.sort_values(by='Semaine', ascending=True, inplace=True)
@@ -84,13 +96,25 @@ fig_ecart = px.histogram(
 
 
 left_column, right_column = st.columns(2)
-left_column.metric(label="Total des pertes", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['Pertes'].sum())+" €")
-right_column.metric(label="Total des écarts", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['ecart'].sum())+" €")
+left_column.metric(label="Total des pertes", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['Pertes'].sum()))
+right_column.metric(label="Total des écarts", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['ecart'].sum()))
 
-if len(selected2) < 5 :
+if len(selected2) > 5 :
     left_column.plotly_chart(fig_pertes, use_container_width=True)
     right_column.plotly_chart(fig_ecart, use_container_width=True)
 else:
     st.plotly_chart(fig_pertes)
     st.plotly_chart(fig_ecart)
 
+
+# st.button(
+#     label= 'db',
+#     on_click=cur.execute()
+# )
+
+# data = dt_week[['Semaine', 'Produit', 'Pertes', 'ecart']].to_records(index=False).tolist()
+# con.execute("INSERT INTO Produit(semaine,produits,pertes,ecarts) VALUES(?,?,?,?)",data)
+# cur.executemany('INSERT INTO Produit(semaine,produits,pertes,ecarts) VALUES(?,?,?,?)',dt_week[['Semaine','Produit','Pertes','ecart']])
+
+
+# cur.commit()

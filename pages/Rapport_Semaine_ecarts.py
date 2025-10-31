@@ -11,16 +11,16 @@ st.set_page_config(page_title="Weekly Report",
 )
 dt_week= pd.read_excel("./Export.xls")
 dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes Total':'Pertes','Période au':'Semaine','Produit':'Produit'})
-st.sidebar.title("Navigation")
-st.sidebar.header("Header")
-page_toggle = st.sidebar.toggle(label='Pertes / Ecarts')
+# st.sidebar.title("Navigation")
+# st.sidebar.header("Header")
+# page_toggle = st.sidebar.toggle(label='Pertes / Ecarts')
 
-selected2 = st.sidebar.multiselect(
-    "Selection de prodtuit",
-    options=dt_week["Produit"].unique(),
-    key="product_selection2",
-    )
-st.sidebar.markdown("---")
+# selected2 = st.sidebar.multiselect(
+#     "Selection de prodtuit",
+#     options=dt_week["Produit"].unique(),
+#     key="product_selection2",
+#     )
+# st.sidebar.markdown("---")
 
 
 dt_week= pd.read_excel("./Export.xls")
@@ -61,7 +61,7 @@ dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True)
 
 # TOP ECARTS
 dt_pertes = dt_week.sort_values(by='ecart', ascending=False, inplace=True)
-st.subheader("Top 10 des écarts de la semaine " + str(dt_week["Semaine"].max()))
+st.subheader("Top 10 des écarts de la semaine " + str(dt_week["Semaine"].dt.strftime('%U').max()))
 dt_week = dt_week.where(dt_week["Marché"] == 'FOOD').dropna(subset=['Marché'])
 
 st.dataframe(dt_week[["Produit","Pertes","ecart"]].
