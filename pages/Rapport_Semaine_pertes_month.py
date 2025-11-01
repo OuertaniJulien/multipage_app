@@ -32,7 +32,7 @@ dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes T
 # st.sidebar.markdown("---")
 
 
-dt_week= pd.read_excel("./Export.xls")
+dt_week= pd.read_excel("./Export_month.xls")
 dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes Total':'Pertes','Période au':'Semaine','Produit':'Produit'})
 
 
