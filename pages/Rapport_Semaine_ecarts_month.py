@@ -61,7 +61,7 @@ dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True)
 
 # TOP ECARTS
 dt_pertes = dt_week.sort_values(by='ecart', ascending=False, inplace=True)
-st.subheader("Top 10 des écarts de la semaine " + str(dt_week["Semaine"].dt.strftime('%U').max()))
+st.subheader("Top 10 des écarts du mois")
 dt_week = dt_week.where(dt_week["Marché"] == 'FOOD').dropna(subset=['Marché'])
 
 st.dataframe(dt_week[["Produit","Pertes","ecart"]].
