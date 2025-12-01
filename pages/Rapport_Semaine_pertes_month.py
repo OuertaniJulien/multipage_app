@@ -73,8 +73,9 @@ dt_pertes = dt_week.sort_values(by='Pertes', ascending=False, inplace=True)
 
 st.subheader("Top 10 des pertes du mois")
 
-st.dataframe(dt_week[["Produit","Pertes","ecart"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10), use_container_width=True, hide_index=True)
+st.dataframe(dt_week[["Semaine","Produit","Pertes","ecart"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10), use_container_width=True, hide_index=True)
 top_pertes(dt_week[["Produit","Pertes","ecart","Semaine"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10))
+
 
 
 
