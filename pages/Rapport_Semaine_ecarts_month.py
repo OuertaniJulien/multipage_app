@@ -65,8 +65,9 @@ st.subheader("Top 10 des écarts du mois")
 dt_week = dt_week.where(dt_week["Marché"] == 'FOOD').dropna(subset=['Marché'])
 dt_week['Mois'] = dt_week['Semaine'].dt.strftime('%m')
 st.dataframe(dt_week[["Mois","Produit","Pertes","ecart"]].
-            where(dt_week["Semaine"] == dt_week["Semaine"].
+            where(dt_week["Mois"] == dt_week["Mois"].
                 max()).dropna().head(10), use_container_width=True)
-top_ecart(dt_week[["Produit","Pertes","ecart","Semaine"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10))
+top_ecart(dt_week[["Produit","Pertes","ecart","Mois"]].where(dt_week["Mois"] == dt_week["Mois"].max()).dropna().head(10))
+
 
 
