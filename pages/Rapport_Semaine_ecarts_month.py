@@ -27,7 +27,7 @@ dt_week= pd.read_excel("./Export_month.xls")
 dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes Total':'Pertes','Période au':'Semaine','Produit':'Produit'})
 
 def top_pertes(dt):
-    dt.sort_values(by='Semaine', ascending=True, inplace=True)      
+    dt.sort_values(by='Mois', ascending=True, inplace=True)      
     fig_ = px.bar(
         dt,
         x="Produit",
@@ -39,7 +39,7 @@ def top_pertes(dt):
     
     return st.plotly_chart(fig_)
 def top_ecart(dt):
-    dt.sort_values(by='Semaine', ascending=True, inplace=True)      
+    dt.sort_values(by='Mois', ascending=True, inplace=True)      
     fig_ = px.bar(
         dt,
         x="Produit",
@@ -68,6 +68,7 @@ st.dataframe(dt_week[["Mois","Produit","Pertes","ecart"]].
             where(dt_week["Mois"] == dt_week["Mois"].
                 max()).dropna().head(10), use_container_width=True)
 top_ecart(dt_week[["Produit","Pertes","ecart","Mois"]].where(dt_week["Mois"] == dt_week["Mois"].max()).dropna().head(10))
+
 
 
 
