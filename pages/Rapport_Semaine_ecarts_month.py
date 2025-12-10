@@ -22,12 +22,18 @@ dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes T
 #     )
 # st.sidebar.markdown("---")
 
-
+slider = st.sidebar.slider(
+    label="Please select a rating range",
+    min_value=-500,
+    max_value=500,
+    value=(0,500)
+)
+st.text(slider)
 dt_week= pd.read_excel("./Export_month.xls")
 dt_week = dt_week.rename(columns={'écart d\'inventaire Total':'ecart','Pertes Total':'Pertes','Période au':'Semaine','Produit':'Produit'})
 
 def top_pertes(dt):
-    dt.sort_values(by='Mois', ascending=True, inplace=True)      
+    dt.sort_values(by='Semaine', ascending=True, inplace=True)      
     fig_ = px.bar(
         dt,
         x="Produit",
@@ -39,7 +45,7 @@ def top_pertes(dt):
     
     return st.plotly_chart(fig_)
 def top_ecart(dt):
-    dt.sort_values(by='Mois', ascending=True, inplace=True)      
+    dt.sort_values(by='Semaine', ascending=True, inplace=True)      
     fig_ = px.bar(
         dt,
         x="Produit",
@@ -63,12 +69,7 @@ dt_week["Semaine"] = pd.to_datetime(dt_week["Semaine"],dayfirst=True)
 dt_pertes = dt_week.sort_values(by='ecart', ascending=False, inplace=True)
 st.subheader("Top 10 des écarts du mois")
 dt_week = dt_week.where(dt_week["Marché"] == 'FOOD').dropna(subset=['Marché'])
-dt_week['Mois'] = dt_week['Semaine'].dt.strftime('%m')
-st.dataframe(dt_week[["Mois","Produit","Pertes","ecart"]].
-            where(dt_week["Mois"] == dt_week["Mois"].
-                max()).dropna().head(10), use_container_width=True)
-top_ecart(dt_week[["Produit","Pertes","ecart","Mois"]].where(dt_week["Mois"] == dt_week["Mois"].max()).dropna().head(10))
 
-
-
+st.dataframe(dt_week[["Produit","Pertes","ecart"]].where(dt_week["Semaine"] == dt_week["Semaine"]).query("ecart >= @slider[0] and ecart <= @slider[1]"))
+top_ecart(dt_week[["Produit","Pertes","ecart","Semaine"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10).query("ecart >= @slider[0] and ecart <= @slider[1]"))
 

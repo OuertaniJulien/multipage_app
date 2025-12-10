@@ -33,14 +33,14 @@ dt_week["Semaine"] = dt_week["Semaine"].dt.strftime('S%U')
 
 dt_week[['Pertes','ecart']] = dt_week[['Pertes','ecart']].fillna(0).astype(float).round(2)
 dt_week.sort_values(by='Pertes', ascending=False, inplace=True)
+dt_week.sort_values(by='Semaine', ascending=False, inplace=True)
 
 selected = st.sidebar.multiselect(
     "Selection de semaine",
     options=dt_week["Semaine"].unique(),
-    default=dt_week["Semaine"].tail(1).values,
+    default=dt_week["Semaine"].drop_duplicates().head(4).values,
     key="product_selection"
 )
-
 selected2 = st.sidebar.multiselect(
     "Selection de produits",
     options=dt_week["Produit"].unique()
@@ -96,8 +96,11 @@ fig_ecart = px.histogram(
 
 
 left_column, right_column = st.columns(2)
-left_column.metric(label="Total des pertes", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['Pertes'].sum()))
-right_column.metric(label="Total des écarts", value=str(dt_week.query("Produit == @selected2" " & Semaine == @selected")['ecart'].sum()))
+total_pertes = str(int(dt_week.query("Produit == @selected2" " & Semaine == @selected")['Pertes'].sum()))
+total_ecart = str(int(dt_week.query("Produit == @selected2" " & Semaine == @selected")['ecart'].sum()))
+
+left_column.metric(label="Total des pertes", value=str(total_pertes+'€'))
+right_column.metric(label="Total des écarts", value=str(total_ecart+'€'))
 
 if len(selected2) > 5 :
     left_column.plotly_chart(fig_pertes, use_container_width=True)

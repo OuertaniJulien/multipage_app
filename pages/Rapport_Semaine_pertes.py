@@ -3,7 +3,7 @@ import pandas as pd # pyright: ignore[reportMissingModuleSource]
 import plotly.express as px # pyright: ignore[reportMissingImports]
 import plotly.graph_objects as go # type: ignore
 import pathlib
-
+import sqlite3
 
 # Function to load CSS from the 'assets' folder
 def load_css(file_path):
@@ -75,6 +75,31 @@ st.subheader("Top 10 des pertes de la semaine " + str(dt_week["Semaine"].dt.strf
 
 st.dataframe(dt_week[["Produit","Pertes","ecart"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10), use_container_width=True, hide_index=True)
 top_pertes(dt_week[["Produit","Pertes","ecart","Semaine"]].where(dt_week["Semaine"] == dt_week["Semaine"].max()).dropna().head(10))
+dt_week["Semaine"] = dt_week["Semaine"].dt.strftime('%U')
 
+con = sqlite3.connect('tutorial.db')
 
+cur = con.cursor()
+table = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Weekly'").fetchall()
+if table == [] :
+    cur.execute("CREATE TABLE Weekly (Semaine,Produit,Pertes,ecart, UNIQUE (Semaine,Produit) ON CONFLICT REPLACE) ")
 
+data = dt_week[['Semaine', 'Produit', 'Pertes', 'ecart']].to_records(index=False).tolist()
+# con.execute("INSERT INTO Produit(Semaine,Produit,Pertes,ecart) VALUES(?,?,?,?)",data)
+# st.button(
+#     label= 'db',
+#     on_click=cur.execute()
+# )
+# semaine = pd.read_sql_query('SELECT Semaine FROM Produit', con)
+# cur.execute('DROP TABLE Produit')
+# test = dt_week['Semaine'].isin(semaine).any()
+# print(test)
+# if test==False :
+cur.executemany('INSERT INTO Weekly (Semaine,Produit,pertes,ecart) VALUES(?,?,?,? )',data)
+con.commit()
+table = pd.read_sql_query('SELECT * FROM Weekly',con)
+st.dataframe(table.query("Produit == 'HUILE DE FRITURE'"))
+
+con.close()
+
+# BESOIN DE TESTER AVEC UN NOUVEL EXPORT SI CA MARCHE PAS C EST CHIANT
