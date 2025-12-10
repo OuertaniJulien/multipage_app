@@ -98,7 +98,7 @@ data = dt_week[['Semaine', 'Produit', 'Pertes', 'ecart']].to_records(index=False
 cur.executemany('INSERT INTO Weekly (Semaine,Produit,pertes,ecart) VALUES(?,?,?,? )',data)
 con.commit()
 table = pd.read_sql_query('SELECT * FROM Weekly',con)
-st.dataframe(table.query("Produit == 'HUILE DE FRITURE'"))
+# st.dataframe(table.query("Produit == 'HUILE DE FRITURE'"))
 
 con.close()
 
